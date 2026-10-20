@@ -1,2 +1,5 @@
 # ENTORNO VIRTUAL
 /venv
+
+#ENVIRONMENT
+.env
