@@ -16,6 +16,12 @@ python manage.py migrate sessions
 echo "Marcando las migraciones de 'lacarta' como ya aplicadas (--fake)..."
 python manage.py migrate lacarta --fake
 
+echo "Creando/verificando usuarios demo de prueba..."
+flask --app wsgi seed-demo || echo "Aviso: no se pudieron crear los usuarios demo."
+
+echo "Recolectando estáticos del admin en /app/staticfiles..."
+python manage.py collectstatic --noinput
+
 echo "Verificando/Creando superusuario de Django automáticamente..."
 python manage.py shell << END
 from django.contrib.auth import get_user_model

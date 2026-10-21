@@ -1,3 +1,5 @@
+import os
+
 import click
 from flask import Flask, jsonify, render_template, request, session
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -9,7 +11,7 @@ from api_flask.extensions import db
 
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path="/assets")
     app.config.from_object(config_class)
 
     if len(app.config["JWT_SECRET_KEY"].encode()) < 32:
@@ -108,5 +110,21 @@ def create_app(config_class=Config):
             f"Usuario {auth_user.username!r} creado con rol {profile.rol!r} "
             f"y sub {profile.sub!r}."
         )
+
+    @app.cli.command("seed-demo")
+    def seed_demo_command():
+        """Create/repair the demo accounts using DEMO_PASSWORD."""
+        from api_flask.auth.service import seed_demo_users
+
+        password = os.environ.get("DEMO_PASSWORD", "")
+        if not password:
+            click.echo("DEMO_PASSWORD no está definida; se omiten los usuarios demo.")
+            return
+
+        for auth_user, profile in seed_demo_users(password):
+            click.echo(
+                f"Demo listo: {auth_user.username!r}, rol {profile.rol!r}, "
+                f"sub {profile.sub!r}."
+            )
 
     return app

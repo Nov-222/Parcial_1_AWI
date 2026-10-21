@@ -19,6 +19,14 @@ MIN_PASSWORD = 8
 # password" take about the same time and cannot be told apart.
 _DUMMY_HASH = hash_password("not-a-real-password")
 
+# Test accounts documented for the exam demo. The password is read from
+# DEMO_PASSWORD (never committed), see the `seed-demo` CLI command.
+DEMO_USERS = (
+    ("demo_cliente", "Cliente Demo", "cliente"),
+    ("demo_cocina", "Cocina Demo", "cocina"),
+    ("demo_admin", "Admin Demo", "admin"),
+)
+
 
 class RegistrationError(Exception):
     def __init__(self, code, message, status=400):
@@ -82,6 +90,60 @@ def create_user(username, password, nombre=None, role="cliente"):
         raise
 
     return auth_user, profile
+
+
+def seed_demo_users(password):
+    """Create or repair the three demo accounts. Idempotent.
+
+    This is meant for local/exam testing: it guarantees that the documented
+    demo credentials work after a fresh database. The password comes from the
+    DEMO_PASSWORD environment variable, never from source code.
+    """
+    seeded = []
+    for username, nombre, role in DEMO_USERS:
+        auth_user = AuthUser.query.filter_by(username=username).first()
+        if auth_user is None:
+            auth_user = AuthUser(
+                username=username,
+                password=hash_password(password),
+                first_name=nombre,
+                last_name="",
+                email=f"{username}@local.invalid",
+                is_active=True,
+            )
+            db.session.add(auth_user)
+            db.session.flush()
+        else:
+            auth_user.is_active = True
+            if not check_password(auth_user.password, password):
+                auth_user.password = hash_password(password)
+
+        profile = Usuario.query.filter_by(sub=sub_for(auth_user)).first()
+        if profile is None:
+            profile = Usuario.query.filter_by(
+                email=f"{username}@local.invalid"
+            ).first()
+        if profile is None:
+            profile = Usuario(
+                nombre=nombre,
+                apellido_paterno="",
+                apellido_materno="",
+                email=f"{username}@local.invalid",
+                contrasena="!",  # legacy NOT NULL column
+                rol=role,
+                sub=sub_for(auth_user),
+            )
+            db.session.add(profile)
+        else:
+            profile.nombre = nombre
+            profile.rol = role
+            profile.sub = sub_for(auth_user)
+            profile.eliminado = 0
+
+        seeded.append((auth_user, profile))
+
+    db.session.commit()
+    return seeded
 
 
 def authenticate(username, password):
