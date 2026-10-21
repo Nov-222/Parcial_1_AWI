@@ -11,5 +11,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el código fuente del proyecto
 COPY . .
-
-EXPOSE 5000 8000

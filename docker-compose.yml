@@ -27,6 +27,7 @@ services:
     entrypoint: ["sh", "/app/entrypoint.sh"]
     volumes:
       - .:/app
+    # Ya no necesitas exponer el 8000 hacia afuera si usas Nginx, pero puedes dejarlo si prefieres
     ports:
       - "8000:8000"
     env_file:
@@ -56,6 +57,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - lacarta_network
+
+  # 4. Nginx (Proxy Inverso)
+  nginx:
+    image: nginx:latest
+    container_name: lacarta_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - django
+      - flask
     networks:
       - lacarta_network
 
