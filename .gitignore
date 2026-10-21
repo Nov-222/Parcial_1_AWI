@@ -1,5 +1,10 @@
 # ENTORNO VIRTUAL
 /venv
 
-#ENVIRONMENT
+# ENVIRONMENT
 .env
+
+# PYTHON CACHE & COMPILADOS
+__pycache__/
+*.py[cod]
+*$py.class
