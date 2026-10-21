@@ -9,6 +9,12 @@ __pycache__/
 *$py.class
 *.sqlite3
 
+# Caché de pruebas
+.pytest_cache/
+.coverage
+htmlcov/
+staticfiles/
+
 # Variables de entorno y secretos
 .env
 *.env
