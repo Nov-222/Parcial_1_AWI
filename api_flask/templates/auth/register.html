@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta · La Carta{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+  <h1>Crear cuenta</h1>
+  <p class="muted small">
+    Las cuentas nuevas siempre reciben el rol <strong>cliente</strong>.
+    Cocina y admin se crean con el comando <code>flask --app wsgi create-user</code>.
+  </p>
+
+  <form method="post" action="{{ url_for('auth.register_submit') }}" class="stack">
+    <label for="nombre">Nombre</label>
+    <input id="nombre" name="nombre" type="text" maxlength="100" autocomplete="name"
+           value="{{ nombre or '' }}">
+
+    <label for="username">Usuario</label>
+    <input id="username" name="username" type="text" required minlength="3" maxlength="80"
+           pattern="[a-z0-9_.\-]{3,80}" autocomplete="username" value="{{ username or '' }}">
+    <span class="hint">3-80 caracteres: minúsculas, números, punto, guion o guion bajo.</span>
+
+    <label for="password">Contraseña</label>
+    <input id="password" name="password" type="password" required minlength="8"
+           autocomplete="new-password">
+    <span class="hint">Mínimo 8 caracteres.</span>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Crear cuenta</button>
+      <a class="btn btn-light" href="{{ url_for('auth.login_form') }}">Ya tengo cuenta</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

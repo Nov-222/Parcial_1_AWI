@@ -1,0 +1,29 @@
+# ENTORNO VIRTUAL
+/venv
+
+# ENVIRONMENT
+.env
+
+# PYTHON CACHE & COMPILADOS
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDEs y EDITORES (VS Code, PyCharm)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ARCHIVOS DEL SISTEMA OPERATIVO
+Thumbs.db
+ehthumbs.db
+.DS_Store
+
+# LOGS Y ARCHIVOS TEMPORALES
+*.log
+
+# DJANGO SPECIFIC (Por si manejas archivos locales o bases de datos de prueba)
+db.sqlite3
+staticfiles/
+media/

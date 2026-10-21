@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Mis pedidos · La Carta{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Mis pedidos</h1>
+    <p class="muted">Solo ves los pedidos asociados a tu <code>sub</code>: {{ claims.sub }}.</p>
+  </div>
+</section>
+
+{% if pedidos %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Pedido</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th class="right">Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pedido in pedidos %}
+        <tr>
+          <td><code>{{ pedido.id|string|truncate(13, True, '…') }}</code></td>
+          <td class="small">{{ pedido.fecha.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td><span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span></td>
+          <td class="right">Bs {{ '%.2f'|format(pedido.total|float) }}</td>
+          <td class="right">
+            <a class="btn btn-small" href="{{ url_for('views.pedido_detalle', pedido_id=pedido.id) }}">Ver</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">Todavía no hiciste pedidos. <a href="{{ url_for('views.index') }}">Mira la carta</a>.</p>
+{% endif %}
+{% endblock %}

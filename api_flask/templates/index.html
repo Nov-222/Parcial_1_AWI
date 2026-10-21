@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}La Carta · Restaurantes{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Restaurantes</h1>
+    <p class="muted">La carta es pública: puedes ver el listado y el detalle sin iniciar sesión.</p>
+  </div>
+  <form class="search" method="get" action="{{ url_for('views.index') }}">
+    <input type="search" name="q" value="{{ q or '' }}" placeholder="Buscar restaurante…" aria-label="Buscar restaurante">
+    <button type="submit" class="btn">Buscar</button>
+  </form>
+</section>
+
+{% if restaurantes %}
+  <ul class="card-grid">
+    {% for restaurante in restaurantes %}
+      <li class="card">
+        <h2><a href="{{ url_for('views.restaurante_detalle', restaurante_id=restaurante.id) }}">{{ restaurante.nombre }}</a></h2>
+        {% if restaurante.descripcion %}<p class="muted">{{ restaurante.descripcion }}</p>{% endif %}
+        {% if restaurante.direccion %}<p class="small">{{ restaurante.direccion }}</p>{% endif %}
+        <a class="btn btn-small" href="{{ url_for('views.restaurante_detalle', restaurante_id=restaurante.id) }}">Ver carta</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% if mostrar_mas %}
+    <p class="muted small">Mostrando {{ restaurantes|length }} resultados. Usa la búsqueda para acotar.</p>
+  {% endif %}
+{% else %}
+  <p class="empty">No hay restaurantes que coincidan con «{{ q }}».</p>
+{% endif %}
+{% endblock %}

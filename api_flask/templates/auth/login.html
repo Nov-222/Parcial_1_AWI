@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Ingresar · La Carta{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+  <h1>Ingresar</h1>
+  <p class="muted small">Usa tu cuenta de La Carta. El servidor firma un JWT y lo guarda en la sesión.</p>
+
+  <form method="post" action="{{ url_for('auth.login_submit') }}" class="stack">
+    <input type="hidden" name="next" value="{{ next or '' }}">
+
+    <label for="username">Usuario</label>
+    <input id="username" name="username" type="text" required autocomplete="username"
+           value="{{ username or '' }}">
+
+    <label for="password">Contraseña</label>
+    <input id="password" name="password" type="password" required autocomplete="current-password">
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Ingresar</button>
+      <a class="btn btn-light" href="{{ url_for('auth.register_form') }}">Crear cuenta</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

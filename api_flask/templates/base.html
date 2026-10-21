@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}La Carta{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('views.index') }}">La Carta</a>
+    <nav class="site-nav">
+      {% if claims %}
+        <span class="who">{{ claims.username }} · {{ claims.role }}</span>
+        {% if can('read:mis-pedidos') %}
+          <a href="{{ url_for('views.mis_pedidos') }}">Mis pedidos</a>
+        {% endif %}
+        {% if can('read:pedidos') %}
+          <a href="{{ url_for('views.cocina') }}">Cocina</a>
+        {% endif %}
+        <form action="{{ url_for('auth.logout') }}" method="post" class="inline">
+          <button type="submit" class="btn btn-small btn-light">Salir</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login_form') }}">Ingresar</a>
+        <a class="btn btn-small" href="{{ url_for('auth.register_form') }}">Crear cuenta</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <p class="flash flash-{{ category }}">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    ISW-233 · La Carta 2.0 · Flask + Jinja2 + JWT + PostgreSQL
+  </footer>
+</body>
+</html>

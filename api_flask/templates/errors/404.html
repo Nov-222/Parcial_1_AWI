@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}404 · La Carta{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>404 · No encontrado</h1>
+  <p>El recurso no existe o no te pertenece.</p>
+  <p class="small muted">Por diseño, el pedido de otro cliente responde 404 y no 403: no confirmamos que exista.</p>
+  <a class="btn" href="{{ url_for('views.index') }}">Volver a la carta</a>
+</section>
+{% endblock %}

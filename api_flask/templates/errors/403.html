@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}403 · La Carta{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>403 · Sin permiso</h1>
+  <p>{{ message or 'Tu cuenta no tiene el permiso necesario para esta acción.' }}</p>
+  <p class="small muted">La autenticación fue correcta; la autorización no. El servidor aplica el permiso en la ruta, no el botón.</p>
+  <a class="btn" href="{{ url_for('views.index') }}">Volver a la carta</a>
+</section>
+{% endblock %}
