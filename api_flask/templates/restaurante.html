@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ restaurante.nombre }} · La Carta{% endblock %}
+
+{% block content %}
+<p class="small"><a href="{{ url_for('views.index') }}">← Todos los restaurantes</a></p>
+
+<section class="page-head">
+  <div>
+    <h1>{{ restaurante.nombre }}</h1>
+    {% if restaurante.descripcion %}<p class="muted">{{ restaurante.descripcion }}</p>{% endif %}
+    {% if restaurante.direccion %}<p class="small">{{ restaurante.direccion }}</p>{% endif %}
+  </div>
+</section>
+
+{% if not claims %}
+  <p class="flash flash-info">
+    <a href="{{ url_for('auth.login_form', next=request.path) }}">Inicia sesión</a>
+    para armar un pedido.
+  </p>
+{% elif not can('create:pedidos') %}
+  <p class="flash flash-info">Tu rol ({{ claims.role }}) no puede crear pedidos.</p>
+{% endif %}
+
+{% if platos %}
+  <form method="post" action="{{ url_for('views.crear_pedido') }}">
+    <input type="hidden" name="restaurante_id" value="{{ restaurante.id }}">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Plato</th>
+          <th>Descripción</th>
+          <th class="right">Precio</th>
+          {% if can('create:pedidos') %}<th class="right">Cantidad</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for plato in platos %}
+          <tr class="{{ 'unavailable' if not plato.disponible else '' }}">
+            <td>
+              {{ plato.nombre }}
+              {% if not plato.disponible %}<span class="badge badge-muted">No disponible</span>{% endif %}
+            </td>
+            <td class="muted small">{{ plato.descripcion or '—' }}</td>
+            <td class="right">Bs {{ '%.2f'|format(plato.precio|float) }}</td>
+            {% if can('create:pedidos') %}
+              <td class="right">
+                {% if plato.disponible %}
+                  <input class="qty" type="number" name="cantidad_{{ plato.id }}"
+                         min="0" max="20" step="1" value="0"
+                         aria-label="Cantidad de {{ plato.nombre }}">
+                {% else %}
+                  <input class="qty" type="number" value="0" disabled aria-label="No disponible">
+                {% endif %}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if can('create:pedidos') %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Hacer pedido</button>
+        <span class="muted small">Cantidad entre 1 y 20 por plato. El total lo calcula el servidor.</span>
+      </div>
+    {% endif %}
+  </form>
+{% else %}
+  <p class="empty">Este restaurante todavía no tiene platos.</p>
+{% endif %}
+{% endblock %}

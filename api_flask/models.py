@@ -3,6 +3,39 @@ from datetime import datetime, timezone
 from sqlalchemy.dialects.postgresql import UUID
 from api_flask.extensions import db
 
+
+class AuthUser(db.Model):
+    """Django's `public.auth_user`, used only for credentials.
+
+    Django owns the schema and creates this table with `migrate auth`, so Flask
+    never calls create_all(). The profile (role, Auth0 `sub`) lives in
+    `content.usuario`.
+    """
+
+    __tablename__ = 'auth_user'
+    __table_args__ = {'schema': 'public'}
+
+    id = db.Column('id', db.Integer, primary_key=True)
+    password = db.Column('password', db.String(128), nullable=False)
+    last_login = db.Column('last_login', db.DateTime(timezone=True))
+    is_superuser = db.Column('is_superuser', db.Boolean, nullable=False, default=False)
+    username = db.Column('username', db.String(150), nullable=False, unique=True)
+    first_name = db.Column('first_name', db.String(150), nullable=False, default='')
+    last_name = db.Column('last_name', db.String(150), nullable=False, default='')
+    email = db.Column('email', db.String(254), nullable=False, default='')
+    is_staff = db.Column('is_staff', db.Boolean, nullable=False, default=False)
+    is_active = db.Column('is_active', db.Boolean, nullable=False, default=True)
+    date_joined = db.Column(
+        'date_joined',
+        db.DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+    )
+
+    def __repr__(self):
+        return f"<AuthUser {self.id} {self.username!r}>"
+
+
 class Usuario(db.Model):
     __tablename__ = 'usuario'
     __table_args__ = {'schema': 'content'}

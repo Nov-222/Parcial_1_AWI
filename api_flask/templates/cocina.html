@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Cocina · La Carta{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Cola de cocina</h1>
+    <p class="muted">Pedidos activos: pendiente → en preparación → listo. La página no se actualiza sola: recarga.</p>
+  </div>
+  <a class="btn" href="{{ url_for('views.cocina') }}">Recargar</a>
+</section>
+
+{% if pedidos %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Pedido</th>
+        <th>Cliente</th>
+        <th>Hora</th>
+        <th>Estado</th>
+        <th class="right">Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pedido in pedidos %}
+        <tr>
+          <td><code>{{ pedido.id|string|truncate(13, True, '…') }}</code></td>
+          <td>{{ usuarios.get(pedido.usuario_id).nombre if usuarios.get(pedido.usuario_id) else '—' }}</td>
+          <td class="small">{{ pedido.fecha.strftime('%H:%M') }}</td>
+          <td><span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span></td>
+          <td class="right">Bs {{ '%.2f'|format(pedido.total|float) }}</td>
+          <td class="right actions">
+            <a class="btn btn-small" href="{{ url_for('views.pedido_detalle', pedido_id=pedido.id) }}">Ver</a>
+            {% if can('update:pedidos') %}
+              <form method="post" action="{{ url_for('views.avanzar_pedido', pedido_id=pedido.id) }}" class="inline">
+                <button type="submit" class="btn btn-small btn-primary">Avanzar</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">No hay pedidos activos.</p>
+{% endif %}
+{% endblock %}

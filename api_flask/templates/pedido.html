@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Pedido · La Carta{% endblock %}
+
+{% block content %}
+<p class="small">
+  {% if can('read:pedidos') %}
+    <a href="{{ url_for('views.cocina') }}">← Cola de cocina</a>
+  {% else %}
+    <a href="{{ url_for('views.mis_pedidos') }}">← Mis pedidos</a>
+  {% endif %}
+</p>
+
+<section class="page-head">
+  <div>
+    <h1>Pedido <code>{{ pedido.id }}</code></h1>
+    <p class="muted">
+      {{ pedido.fecha.strftime('%Y-%m-%d %H:%M') }} ·
+      <span class="badge badge-{{ pedido.estado }}">{{ pedido.estado }}</span>
+      {% if restaurante %} · {{ restaurante.nombre }}{% endif %}
+    </p>
+    {% if can('read:pedidos') %}
+      <p class="small">Cliente: {{ dueno.nombre if dueno else pedido.usuario_id }} ({{ pedido.usuario_id }})</p>
+    {% endif %}
+  </div>
+</section>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Plato</th>
+      <th class="right">Cantidad</th>
+      <th class="right">Precio unitario</th>
+      <th class="right">Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item, plato in items %}
+      <tr>
+        <td>{{ plato.nombre }}</td>
+        <td class="right">{{ item.cantidad }}</td>
+        <td class="right">Bs {{ '%.2f'|format(item.precio_unitario|float) }}</td>
+        <td class="right">Bs {{ '%.2f'|format((item.precio_unitario|float) * item.cantidad) }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="3" class="right">Total</th>
+      <th class="right">Bs {{ '%.2f'|format(pedido.total|float) }}</th>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="form-actions">
+  {% if usuario and pedido.usuario_id == usuario.id and pedido.estado == 'pendiente' %}
+    <form method="post" action="{{ url_for('views.cancelar_pedido', pedido_id=pedido.id) }}"
+          onsubmit="return confirm('¿Cancelar este pedido?');">
+      <button type="submit" class="btn btn-danger">Cancelar pedido</button>
+    </form>
+  {% endif %}
+
+  {% if can('update:pedidos') and pedido.estado in ('pendiente', 'en_preparacion', 'listo') %}
+    <form method="post" action="{{ url_for('views.avanzar_pedido', pedido_id=pedido.id) }}">
+      <button type="submit" class="btn btn-primary">Avanzar estado</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}
