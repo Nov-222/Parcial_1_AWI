@@ -1,0 +1,67 @@
+services:
+  # 1. Base de Datos PostgreSQL
+  db:
+    image: postgres:16
+    container_name: lacarta_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema_design:/docker-entrypoint-initdb.d/
+    networks:
+      - lacarta_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Django (Automatizado con el script de entrada)
+  django:
+    build: .
+    container_name: lacarta_django
+    entrypoint: ["sh", "/app/entrypoint.sh"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - lacarta_network
+
+  # 3. Flask (API con Gunicorn)
+  flask:
+    build: .
+    container_name: lacarta_flask
+    command: gunicorn --config gunicorn.conf.py wsgi:app
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      - GUNICORN_BIND=0.0.0.0:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - lacarta_network
+
+volumes:
+  postgres_data:
+
+networks:
+  lacarta_network:
+    driver: bridge
