@@ -1,0 +1,10 @@
+Ejecutar Pruebas:
+.\venv\Scripts\python.exe -m pytest -q
+
+Usuario / Contrasena
+demo_cliente / LaCarta2026!   (cliente)
+demo_cocina  / LaCarta2026!   (cocina)
+demo_admin   / LaCarta2026!   (admin)
+admin        / admin123       (superusuario Django)
+
+#Error de Django debido a que no se agrego el host de eejcucion con ip elastica

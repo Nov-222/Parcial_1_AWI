@@ -33,3 +33,6 @@ htmlcov/
 db.sqlite3
 staticfiles/
 media/
+
+# CERTIFICADOS TLS LOCALES (nunca subir la clave privada)
+nginx/certs/
