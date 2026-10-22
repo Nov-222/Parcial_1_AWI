@@ -330,24 +330,32 @@ cd Parcial_1_AWI
 # 3. Crear el archivo .env en el servidor (no viene del repositorio)
 nano .env
 
-# 4. Levantar
+# 4. Generar un certificado local autofirmado (solo desarrollo)
+sh scripts/generate-local-cert.sh
+
+# 5. Levantar
 docker compose up -d --build
 docker compose ps
 ```
+
+En EC2, reemplaza `nginx/certs/lacarta.crt` y `nginx/certs/lacarta.key` por el
+certificado de Let's Encrypt antes de levantar Nginx. Los certificados locales
+no se suben al repositorio. El certificado local es autofirmado, así que el
+navegador mostrará una advertencia hasta que uses uno de confianza.
 
 Servicios:
 
 | URL | Servicio |
 |---|---|
-| `http://localhost/` | Menú público (Flask/Jinja) |
-| `http://localhost/auth/ingresar` | Login HTML |
-| `http://localhost/auth/registro` | Registro HTML |
-| `http://localhost/pedidos` | Pedidos del cliente |
-| `http://localhost/cocina` | Cola de cocina |
-| `http://localhost/api/...` | API JSON |
-| `http://localhost/admin/` | Django Admin |
-| `http://localhost/static/...` | Estáticos de Django |
-| `http://localhost/assets/...` | Estáticos de Flask |
+| `https://localhost/` | Menú público (Flask/Jinja) |
+| `https://localhost/auth/ingresar` | Login HTML |
+| `https://localhost/auth/registro` | Registro HTML |
+| `https://localhost/pedidos` | Pedidos del cliente |
+| `https://localhost/cocina` | Cola de cocina |
+| `https://localhost/api/...` | API JSON |
+| `https://localhost/admin/` | Django Admin |
+| `https://localhost/static/...` | Estáticos de Django |
+| `https://localhost/assets/...` | Estáticos de Flask |
 
 Los usuarios demo se crean al arrancar Django:
 
@@ -393,8 +401,8 @@ Resultado esperado:
 ## 10. Límites y trabajo pendiente
 
 - **Auth0 real no está implementado.** Se usa un JWT local HS256 que imita el contrato; no hay tenant, JWKS, RS256, refresh tokens ni Universal Login.
-- **R4 (Docker/Compose):** Django todavía arranca con `runserver`; los puertos `8000`, `5000` y `5432` siguen publicados y no existe un servicio de migraciones separado.
-- **R5 (HTTPS/subdominios):** Nginx escucha solo HTTP en el puerto 80; no hay certificados ni separación por subdominios.
+- **R4 (Docker/Compose):** Django todavía arranca con `runserver`; PostgreSQL publica `5432` para que las pruebas locales puedan conectarse y no existe un servicio de migraciones separado.
+- **R5 (HTTPS/subdominios):** Nginx escucha en 443 con un certificado local autofirmado y redirige HTTP a HTTPS. En EC2 falta reemplazarlo por un certificado de Let's Encrypt y abrir el puerto 443 en el Security Group.
 - **Credenciales del superusuario:** `entrypoint.sh` crea `admin` con una contraseña por defecto. Antes de un despliegue real debería leerlas de variables de entorno.
 - **Tests:** dependen de que PostgreSQL esté levantado y no se ejecutan todavía en un pipeline CI.
 - **Cookies:** la cookie de sesión usa `HttpOnly` y `SameSite=Lax`; para producción con HTTPS debería añadirse `Secure`.
