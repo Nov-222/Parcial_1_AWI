@@ -363,7 +363,7 @@ Los usuarios demo se crean al arrancar Django:
 - `demo_cocina` → rol `cocina`
 - `demo_admin` → rol `admin`
 
-La contraseña es la definida en `DEMO_PASSWORD` dentro de `.env`. No se documenta en el repositorio.
+La contraseña es LaCarta2026! para cada usuario.
 
 ### Pruebas
 
