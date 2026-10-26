@@ -27,7 +27,7 @@ services:
     entrypoint: ["sh", "/app/entrypoint.sh"]
     volumes:
       - .:/app
-      - ./staticfiles:/app/staticfiles:ro
+      - ./staticfiles:/app/staticfiles
     env_file:
       - .env
     environment:

@@ -24,3 +24,5 @@ errorlog = "-"
 
 # Confiar en las cabeceras de proxy de Nginx (X-Forwarded-*)
 forwarded_allow_ips = "*"
+
+wsgi_app = "wsgi:application"
