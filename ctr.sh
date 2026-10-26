@@ -17,9 +17,9 @@ fi
 mkdir -p nginx/certs staticfiles schema_design
 
 # 3. Emisión de certificado SSL oficial y válido (Let's Encrypt)
-DOMAIN_MAIN="django_django_django.chickenkiller.com"
-DOMAIN_SEC="flask_flask_flask.chickenkiller.com"
-EMAIL="admin@serverd.com" # Cambia esto por tu correo real para avisos de renovación
+DOMAIN_MAIN="djangodjangodjango.chickenkiller.com"
+DOMAIN_SEC="flaskflaskflask.chickenkiller.com"
+EMAIL="tu-correo-real@gmail.com"
 CERT_DIR="nginx/certs"
 
 echo "Verificando instalación de Certbot..."
