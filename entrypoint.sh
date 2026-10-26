@@ -44,7 +44,7 @@ echo "=== Entorno completamente preparado. Lanzando WSGI ==="
 
 # 7. Lanzamiento del servidor WSGI (Gunicorn para producción o comando por defecto)
 # Si prefieres usar Gunicorn directamente para la API Flask/WSGI:
-exec gunicorn --bind 0.0.0.0:8000 --workers 3 wsgi:app
+exec gunicorn --bind 0.0.0.0:8000 --workers 3 wsgi:application
 
 # (Nota: Si prefieres delegar el comando final enteramente desde tu docker-compose.yml, 
 #  puedes reemplazar la línea anterior simplemente por: exec "$@")
