@@ -32,8 +32,8 @@ services:
       - .env
     environment:
       - DB_HOST=db
-      - DJANGO_ALLOWED_HOSTS=carta.serverd.com,carta.serverf.com,localhost,127.0.0.1
-      - DJANGO_CSRF_TRUSTED_ORIGINS=http://carta.serverd.com,http://carta.serverf.com,http://localhost,http://127.0.0.1,https://carta.serverd.com,https://carta.serverf.com,https://localhost,https://127.0.0.1
+      - DJANGO_ALLOWED_HOSTS=django_django_django.chickenkiller.com,localhost,127.0.0.1
+      - DJANGO_CSRF_TRUSTED_ORIGINS=http://django_django_django.chickenkiller.com,https://django_django_django.chickenkiller.com,http://localhost,https://localhost,http://127.0.0.1,https://127.0.0.1
     depends_on:
       db:
         condition: service_healthy
