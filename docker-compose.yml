@@ -10,8 +10,8 @@ services:
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./schema_design:/docker-entrypoint-initdb.d/
+      - ./DB/postgres_data:/var/lib/postgresql/data
+      - ./DB/schema_design:/docker-entrypoint-initdb.d/
     networks:
       - lacarta_network
     healthcheck:
